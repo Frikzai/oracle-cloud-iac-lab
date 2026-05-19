@@ -1,0 +1,47 @@
+name: Ansible CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ansible/**"
+      - ".github/workflows/ansible.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "ansible/**"
+      - ".github/workflows/ansible.yml"
+
+jobs:
+  ansible:
+    name: Ansible checks
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ansible
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Ansible and ansible-lint
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install ansible ansible-lint
+
+      - name: Install Ansible collections
+        run: |
+          ansible-galaxy collection install community.general oracle.oci
+
+      - name: Ansible version
+        run: ansible --version
+
+      - name: Ansible syntax check
+        run: ansible-playbook site.yml --syntax-check
+
+      - name: Ansible lint
+        run: ansible-lint .

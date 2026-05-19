@@ -1,0 +1,5 @@
+skip_list:
+  - name[missing]
+  - yaml[line-length]
+  - fqcn[action-core]
+  - risky-shell-pipe
