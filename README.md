@@ -87,3 +87,43 @@ Les interfaces web ne sont pas exposées publiquement. L'accès se fait via tunn
 ```bash
 ssh -L 9090:127.0.0.1:9090 oci-bastion
 ssh -L 3000:127.0.0.1:3000 oci-bastion
+```
+## Architecture
+
+```mermaid
+flowchart TD
+    User["Poste local WSL2<br/>Terraform / Ansible / SSH"] -->|SSH| Bastion["Bastion public<br/>Ubuntu<br/>Subnet public 10.0.1.0/24"]
+
+    Bastion -->|SSH ProxyJump| App["VM applicative privée<br/>Ubuntu<br/>Subnet privé 10.0.10.0/24"]
+
+    Bastion --> Prometheus["Prometheus<br/>127.0.0.1:9090"]
+    Bastion --> Grafana["Grafana<br/>127.0.0.1:3000"]
+    Bastion --> NodeBastion["node_exporter<br/>9100"]
+
+    Prometheus -->|Scrape 9100| NodeBastion
+    Prometheus -->|Scrape 9100<br/>réseau privé| NodeApp["node_exporter<br/>VM app : 9100"]
+
+    App --> NodeApp
+
+    subgraph OCI["Oracle Cloud Infrastructure"]
+        subgraph VCN["VCN 10.0.0.0/16"]
+            subgraph PublicSubnet["Subnet public / DMZ"]
+                Bastion
+                Prometheus
+                Grafana
+                NodeBastion
+            end
+
+            subgraph PrivateSubnet["Subnet privé"]
+                App
+                NodeApp
+            end
+
+            subgraph DataSubnet["Subnet data 10.0.20.0/24"]
+                Data["Zone data isolée<br/>prévue pour DB / stockage"]
+            end
+        end
+    end
+
+    Internet["Internet"] -->|SSH depuis IP admin uniquement| Bastion
+    User -->|Tunnel SSH<br/>localhost:9090 / localhost:3000| Bastion

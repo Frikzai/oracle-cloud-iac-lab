@@ -48,6 +48,18 @@ resource "oci_core_security_list" "private" {
   }
 
   ingress_security_rules {
+    protocol = "6"
+    source   = var.private_subnet_cidr
+
+    tcp_options {
+      min = 9100
+      max = 9100
+    }
+
+    description = "node_exporter depuis le bastion"
+  }
+
+  ingress_security_rules {
     protocol = "1"
     source   = var.vcn_cidr
 

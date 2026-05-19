@@ -5,6 +5,8 @@ ansible_ssh_private_key_file: /home/shaizo/.ssh/oracle_iac_lab
 project_name: oracle-iac-lab
 project_environment: dev
 
+app_private_ip: "10.0.10.113"
+
 admin_user: ubuntu
 
 common_packages:
