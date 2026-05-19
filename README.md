@@ -37,3 +37,6 @@ terraform apply
 
 cd ../ansible
 ansible-playbook site.yml
+
+# oracle-cloud-iac-lab
+
