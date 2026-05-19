@@ -1,0 +1,32 @@
+---
+- name: Ignorer fail2ban en mode check
+  ansible.builtin.debug:
+    msg: "fail2ban est ignoré en mode check"
+  when: ansible_check_mode
+
+- name: Installer fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+    update_cache: true
+  become: true
+  when: not ansible_check_mode
+
+- name: Déployer la configuration fail2ban
+  ansible.builtin.template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart fail2ban
+  when: not ansible_check_mode
+
+- name: Activer et démarrer fail2ban
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true
+  become: true
+  when: not ansible_check_mode

@@ -1,0 +1,10 @@
+---
+- name: Configuration commune des serveurs Linux
+  hosts: linux
+  become: true
+  roles:
+    - common
+    - ssh_hardening
+    - fail2ban
+    - firewall
+    - node_exporter

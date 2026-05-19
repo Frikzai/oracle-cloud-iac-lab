@@ -1,0 +1,78 @@
+---
+- name: Ignorer node_exporter en mode check
+  ansible.builtin.debug:
+    msg: "node_exporter est ignoré en mode check"
+  when: ansible_check_mode
+
+- name: Créer l'utilisateur node_exporter
+  ansible.builtin.user:
+    name: "{{ node_exporter_user }}"
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+  become: true
+  when: not ansible_check_mode
+
+- name: Télécharger node_exporter
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+    dest: "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
+    mode: "0644"
+  become: true
+  when: not ansible_check_mode
+
+- name: Extraire node_exporter
+  ansible.builtin.unarchive:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.tar.gz"
+    dest: /tmp
+    remote_src: true
+  become: true
+  when: not ansible_check_mode
+
+- name: Installer le binaire node_exporter
+  ansible.builtin.copy:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter"
+    dest: /usr/local/bin/node_exporter
+    owner: root
+    group: root
+    mode: "0755"
+    remote_src: true
+  become: true
+  when: not ansible_check_mode
+
+- name: Créer le service systemd node_exporter
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Prometheus Node Exporter
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      User={{ node_exporter_user }}
+      Group={{ node_exporter_user }}
+      Type=simple
+      ExecStart=/usr/local/bin/node_exporter
+
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+  when: not ansible_check_mode
+
+- name: Recharger systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: not ansible_check_mode
+
+- name: Activer et démarrer node_exporter
+  ansible.builtin.service:
+    name: node_exporter
+    state: started
+    enabled: true
+  become: true
+  when: not ansible_check_mode

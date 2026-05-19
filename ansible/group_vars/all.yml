@@ -1,0 +1,27 @@
+---
+ansible_user: ubuntu
+ansible_ssh_private_key_file: /home/shaizo/.ssh/oracle_iac_lab
+
+project_name: oracle-iac-lab
+project_environment: dev
+
+admin_user: ubuntu
+
+common_packages:
+  - curl
+  - wget
+  - vim
+  - htop
+  - net-tools
+  - unzip
+  - git
+  - ca-certificates
+  - gnupg
+  - lsb-release
+  - chrony
+  - jq
+
+ssh_port: 22
+
+node_exporter_version: "1.8.2"
+node_exporter_user: node_exporter

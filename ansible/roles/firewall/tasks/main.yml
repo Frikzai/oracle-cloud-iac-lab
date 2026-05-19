@@ -1,0 +1,34 @@
+---
+- name: Installer ufw
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+  become: true
+
+- name: Autoriser SSH
+  community.general.ufw:
+    rule: allow
+    port: "{{ ssh_port }}"
+    proto: tcp
+  become: true
+  when: not ansible_check_mode
+
+- name: Définir la politique entrante par défaut
+  community.general.ufw:
+    direction: incoming
+    policy: deny
+  become: true
+  when: not ansible_check_mode
+
+- name: Définir la politique sortante par défaut
+  community.general.ufw:
+    direction: outgoing
+    policy: allow
+  become: true
+  when: not ansible_check_mode
+
+- name: Activer ufw
+  community.general.ufw:
+    state: enabled
+  become: true
+  when: not ansible_check_mode

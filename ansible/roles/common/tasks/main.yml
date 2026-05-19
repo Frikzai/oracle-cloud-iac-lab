@@ -1,0 +1,32 @@
+---
+- name: Mettre à jour le cache apt
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Installer les paquets communs
+  ansible.builtin.apt:
+    name: "{{ common_packages }}"
+    state: present
+  become: true
+
+- name: Configurer la timezone
+  community.general.timezone:
+    name: Europe/Paris
+  become: true
+
+- name: Activer et démarrer chrony
+  ansible.builtin.service:
+    name: chrony
+    state: started
+    enabled: true
+  become: true
+  when: not ansible_check_mode
+
+- name: Nettoyer les paquets inutiles
+  ansible.builtin.apt:
+    autoremove: true
+    autoclean: true
+  become: true
+  when: not ansible_check_mode

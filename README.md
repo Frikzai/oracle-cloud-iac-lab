@@ -54,56 +54,20 @@ L'infrastructure est conçue pour être :
 
 ---
 
-## Architecture globale
+## Configuration système avec Ansible
 
-```text
-Poste local WSL2
-   |
-   | Terraform / Ansible / SSH
-   |
-   v
-Oracle Cloud Infrastructure
-   |
-   +-- VCN 10.0.0.0/16
-       |
-       +-- Subnet public 10.0.1.0/24
-       |   |
-       |   +-- Bastion public
-       |
-       +-- Subnet privé 10.0.10.0/24
-       |   |
-       |   +-- VM applicative privée
-       |
-       +-- Subnet data 10.0.20.0/24
-           |
-           +-- Ressources isolées futures
+Ansible configure automatiquement les serveurs Linux avec plusieurs rôles :
 
-## Structure du projet
+- `common` : paquets de base, timezone, chrony 
+- `ssh_hardening` : durcissement SSH 
+- `fail2ban` : protection contre les tentatives SSH répétées 
+- `firewall` : activation d'un firewall local 
+- `node_exporter` : exposition de métriques système pour Prometheus
 
-```text
-oracle-cloud-iac-lab/
-├── README.md
-├── .gitignore
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   ├── network.tf
-│   ├── security.tf
-│   ├── compute.tf
-│   ├── terraform.tfvars.example
-│   └── terraform.tfvars
-├── ansible/
-│   ├── ansible.cfg
-│   ├── inventory/
-│   │   ├── terraform.yml
-│   │   └── oracle.oci.yml
-│   ├── group_vars/
-│   │   └── all.yml
-│   └── site.yml
-├── scripts/
-│   └── generate_ansible_access.sh
-├── docs/
-│   └── adr/
-└── .github/
-    └── workflows/
+Lancement :
+
+```bash
+cd ansible
+ansible-playbook site.yml
+
+---
