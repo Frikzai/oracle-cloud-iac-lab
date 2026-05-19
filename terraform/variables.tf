@@ -67,3 +67,52 @@ variable "data_subnet_cidr" {
   type        = string
   default     = "10.0.20.0/24"
 }
+variable "ssh_public_key_path" {
+  description = "Chemin vers la clé SSH publique à injecter dans les VMs"
+  type        = string
+}
+
+variable "bastion_shape" {
+  description = "Shape OCI pour le bastion"
+  type        = string
+  default     = "VM.Standard.E2.1.Micro"
+}
+
+variable "app_shape" {
+  description = "Shape OCI pour les VMs applicatives"
+  type        = string
+  default     = "VM.Standard.E2.1.Micro"
+}
+
+variable "bastion_ocpus" {
+  description = "Nombre d'OCPU pour le bastion si shape flexible"
+  type        = number
+  default     = 1
+}
+
+variable "bastion_memory_gb" {
+  description = "Mémoire du bastion en Go si shape flexible"
+  type        = number
+  default     = 6
+}
+
+variable "app_ocpus" {
+  description = "Nombre d'OCPU pour la VM applicative si shape flexible"
+  type        = number
+  default     = 1
+}
+
+variable "app_memory_gb" {
+  description = "Mémoire de la VM applicative en Go si shape flexible"
+  type        = number
+  default     = 6
+}
+variable "admin_public_ip_cidr" {
+  description = "IP publique autorisée à se connecter au bastion en SSH"
+  type        = string
+}
+variable "app_instance_count" {
+  description = "Nombre de VMs applicatives privées"
+  type        = number
+  default     = 1
+}

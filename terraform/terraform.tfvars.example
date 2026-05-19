@@ -1,0 +1,29 @@
+tenancy_ocid      = "ocid1.tenancy.oc1..xxxxxxxx"
+user_ocid         = "ocid1.user.oc1..xxxxxxxx"
+fingerprint       = "xx:xx:xx:xx:xx:xx:xx:xx"
+private_key_path  = "/home/user/.oci/oci_api_key.pem"
+region            = "eu-marseille-1"
+compartment_ocid  = "ocid1.compartment.oc1..xxxxxxxx"
+
+project_name = "oracle-iac-lab"
+environment  = "dev"
+
+vcn_cidr            = "10.0.0.0/16"
+public_subnet_cidr  = "10.0.1.0/24"
+private_subnet_cidr = "10.0.10.0/24"
+data_subnet_cidr    = "10.0.20.0/24"
+
+ssh_public_key_path = "/home/user/.ssh/oracle_iac_lab.pub"
+
+bastion_shape = "VM.Standard.E2.1.Micro"
+app_shape     = "VM.Standard.E2.1.Micro"
+
+bastion_ocpus     = null
+bastion_memory_gb = null
+
+app_ocpus     = null
+app_memory_gb = null
+
+app_instance_count = 1
+
+admin_public_ip_cidr = "X.X.X.X/32"

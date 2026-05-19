@@ -11,14 +11,14 @@ resource "oci_core_security_list" "public" {
 
   ingress_security_rules {
     protocol = "6"
-    source   = "0.0.0.0/0"
+    source   = var.admin_public_ip_cidr
 
     tcp_options {
       min = 22
       max = 22
     }
 
-    description = "SSH vers bastion - a restreindre a ton IP publique"
+    description = "SSH vers bastion depuis IP admin"
   }
 
   freeform_tags = local.common_tags

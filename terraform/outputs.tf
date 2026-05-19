@@ -32,3 +32,27 @@ output "service_gateway_id" {
   description = "OCID de la Service Gateway"
   value       = oci_core_service_gateway.main.id
 }
+output "bastion_public_ip" {
+  description = "IP publique du bastion"
+  value       = oci_core_instance.bastion.public_ip
+}
+
+output "bastion_private_ip" {
+  description = "IP privée du bastion"
+  value       = oci_core_instance.bastion.private_ip
+}
+
+output "app_private_ips" {
+  description = "IPs privées des VMs applicatives"
+  value       = [for instance in oci_core_instance.app : instance.private_ip]
+}
+
+output "ssh_bastion_command" {
+  description = "Commande SSH pour se connecter au bastion"
+  value       = "ssh -i ~/.ssh/oracle_iac_lab ubuntu@${oci_core_instance.bastion.public_ip}"
+}
+
+output "ssh_app_via_bastion_example" {
+  description = "Exemple de connexion SSH vers la première VM privée via bastion"
+  value       = "ssh -i ~/.ssh/oracle_iac_lab -J ubuntu@${oci_core_instance.bastion.public_ip} ubuntu@${oci_core_instance.app[0].private_ip}"
+}
