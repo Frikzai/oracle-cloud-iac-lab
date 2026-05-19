@@ -1,0 +1,85 @@
+---
+- name: Ignorer grafana en mode check
+  ansible.builtin.debug:
+    msg: "grafana est ignoré en mode check"
+  when: ansible_check_mode
+
+- name: Installer les dépendances Grafana
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - software-properties-common
+      - wget
+      - gpg
+    state: present
+    update_cache: true
+  become: true
+  when: not ansible_check_mode
+
+- name: Créer le dossier keyrings
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+  become: true
+  when: not ansible_check_mode
+
+- name: Télécharger la clé GPG Grafana
+  ansible.builtin.get_url:
+    url: https://apt.grafana.com/gpg.key
+    dest: /tmp/grafana.gpg.key
+    mode: "0644"
+  become: true
+  when: not ansible_check_mode
+
+- name: Convertir la clé GPG Grafana
+  ansible.builtin.command:
+    cmd: gpg --dearmor -o /etc/apt/keyrings/grafana.gpg /tmp/grafana.gpg.key
+    creates: /etc/apt/keyrings/grafana.gpg
+  become: true
+  when: not ansible_check_mode
+
+- name: Ajouter le dépôt Grafana
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/grafana.list
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
+  become: true
+  when: not ansible_check_mode
+
+- name: Installer Grafana
+  ansible.builtin.apt:
+    name: grafana
+    state: present
+    update_cache: true
+  become: true
+  when: not ansible_check_mode
+
+- name: Configurer Grafana pour écouter en local uniquement
+  ansible.builtin.lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: "^;?http_addr ="
+    line: "http_addr = {{ grafana_http_addr }}"
+  become: true
+  notify: Restart grafana
+  when: not ansible_check_mode
+
+- name: Configurer le port Grafana
+  ansible.builtin.lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: "^;?http_port ="
+    line: "http_port = {{ grafana_http_port }}"
+  become: true
+  notify: Restart grafana
+  when: not ansible_check_mode
+
+- name: Activer et démarrer Grafana
+  ansible.builtin.service:
+    name: grafana-server
+    state: started
+    enabled: true
+  become: true
+  when: not ansible_check_mode

@@ -71,3 +71,19 @@ cd ansible
 ansible-playbook site.yml
 
 ---
+
+## Monitoring
+
+Le monitoring est assuré par :
+
+- `node_exporter` sur chaque serveur Linux 
+- `Prometheus` sur le bastion 
+- `Grafana` sur le bastion
+
+Prometheus collecte les métriques système exposées par `node_exporter`.
+
+Les interfaces web ne sont pas exposées publiquement. L'accès se fait via tunnel SSH :
+
+```bash
+ssh -L 9090:127.0.0.1:9090 oci-bastion
+ssh -L 3000:127.0.0.1:3000 oci-bastion

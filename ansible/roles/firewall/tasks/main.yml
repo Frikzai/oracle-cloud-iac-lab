@@ -13,6 +13,15 @@
   become: true
   when: not ansible_check_mode
 
+- name: Autoriser node_exporter depuis le VCN
+  community.general.ufw:
+    rule: allow
+    port: "9100"
+    proto: tcp
+    from_ip: "10.0.0.0/16"
+  become: true
+  when: not ansible_check_mode
+
 - name: Définir la politique entrante par défaut
   community.general.ufw:
     direction: incoming
@@ -24,6 +33,17 @@
   community.general.ufw:
     direction: outgoing
     policy: allow
+  become: true
+  when: not ansible_check_mode
+
+- name: Autoriser node_exporter dans iptables
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "9100"
+    jump: ACCEPT
+    action: insert
+    rule_num: 1
   become: true
   when: not ansible_check_mode
 

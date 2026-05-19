@@ -1,0 +1,7 @@
+---
+prometheus_version: "2.54.1"
+prometheus_user: prometheus
+prometheus_group: prometheus
+prometheus_config_dir: /etc/prometheus
+prometheus_data_dir: /var/lib/prometheus
+prometheus_listen_address: "127.0.0.1:9090"

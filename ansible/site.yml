@@ -8,3 +8,10 @@
     - fail2ban
     - firewall
     - node_exporter
+
+- name: Installation de Prometheus et Grafana sur le bastion
+  hosts: bastion
+  become: true
+  roles:
+    - prometheus
+    - grafana
