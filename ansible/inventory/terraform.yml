@@ -1,0 +1,15 @@
+---
+all:
+  children:
+    bastion:
+      hosts:
+        oci-bastion:
+
+    app:
+      hosts:
+        oci-app-1:
+
+    linux:
+      children:
+        bastion:
+        app:

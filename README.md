@@ -1,63 +1,109 @@
 # Oracle Cloud IaC Lab
 
-Projet d'infrastructure cloud automatisée sur **Oracle Cloud Infrastructure Free Tier** avec **Terraform**.
+Projet d'infrastructure cloud automatisée sur **Oracle Cloud Infrastructure Free Tier**, réalisé avec **Terraform** et **Ansible**.
 
-L'objectif est de créer une infrastructure cloud propre, segmentée et reproductible, sans configuration manuelle dans la console Oracle Cloud.
+L'objectif est de déployer une infrastructure cloud complète, sécurisée et reproductible, sans configuration manuelle dans la console Oracle Cloud.
+
+Ce projet met en avant des compétences en :
+
+- administration système Linux 
+- réseau cloud 
+- Infrastructure as Code 
+- automatisation 
+- sécurité SSH 
+- gestion d'un bastion 
+- Ansible 
+- Git et documentation technique.
 
 ---
 
 ## Objectif du projet
 
-Ce projet vise à déployer automatiquement une infrastructure de type système/réseau comprenant :
+L'objectif est de créer une infrastructure cloud de type système/réseau comprenant :
 
-- un réseau cloud privé OCI ;
-- une segmentation réseau public / privé / data ;
-- un bastion d'administration exposé uniquement en SSH ;
-- une ou plusieurs VMs applicatives privées sans IP publique ;
-- des règles de sécurité restrictives ;
-- une base prête pour une future automatisation Ansible.
+- un réseau cloud privé Oracle Cloud 
+- une segmentation réseau public / privé / data 
+- un bastion public pour l'administration 
+- une VM applicative privée sans IP publique 
+- des règles de sécurité restrictives 
+- un accès SSH sécurisé via bastion 
+- un inventaire Ansible fonctionnel 
+- une base prête pour du hardening système et du monitoring.
 
-L'idée est de démontrer des compétences concrètes en :
+L'infrastructure est conçue pour être :
 
-- Infrastructure as Code ;
-- administration système Linux ;
-- réseau cloud ;
-- sécurité réseau ;
-- automatisation ;
-- bonnes pratiques Git.
+- versionnée 
+- reproductible 
+- modifiable 
+- destructible 
+- documentée
 
 ---
 
 ## Stack technique
 
 - Oracle Cloud Infrastructure
+- Oracle Cloud Free Tier
 - Terraform
+- Ansible
 - Ubuntu Server
 - Git / GitHub
-- WSL2 Ubuntu pour l'environnement local
-- SSH avec clé privée/publique
+- WSL2 Ubuntu
+- SSH
+- ProxyJump
 
 ---
 
-## Architecture cible
+## Architecture globale
 
 ```text
-Internet
+Poste local WSL2
    |
-   | SSH autorisé uniquement depuis l'IP admin
+   | Terraform / Ansible / SSH
    |
-[Internet Gateway]
+   v
+Oracle Cloud Infrastructure
    |
-[Subnet public / DMZ]
-   |
-[Bastion]
-   |
-   | SSH via ProxyJump
-   |
-[Subnet privé]
-   |
-[VM applicative privée]
+   +-- VCN 10.0.0.0/16
+       |
+       +-- Subnet public 10.0.1.0/24
+       |   |
+       |   +-- Bastion public
+       |
+       +-- Subnet privé 10.0.10.0/24
+       |   |
+       |   +-- VM applicative privée
+       |
+       +-- Subnet data 10.0.20.0/24
+           |
+           +-- Ressources isolées futures
 
-[Subnet data]
-   |
-[Ressources isolées futures]
+## Structure du projet
+
+```text
+oracle-cloud-iac-lab/
+├── README.md
+├── .gitignore
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── network.tf
+│   ├── security.tf
+│   ├── compute.tf
+│   ├── terraform.tfvars.example
+│   └── terraform.tfvars
+├── ansible/
+│   ├── ansible.cfg
+│   ├── inventory/
+│   │   ├── terraform.yml
+│   │   └── oracle.oci.yml
+│   ├── group_vars/
+│   │   └── all.yml
+│   └── site.yml
+├── scripts/
+│   └── generate_ansible_access.sh
+├── docs/
+│   └── adr/
+└── .github/
+    └── workflows/

@@ -1,0 +1,25 @@
+---
+plugin: oracle.oci.oci
+
+regions:
+  - eu-marseille-1
+
+config_file: /home/shaizo/.oci/config
+config_profile: DEFAULT
+
+compartment_ocid: "ocid1.compartment.oc1..aaaaaaaauttddrxlpdrefb7eazylxwxlxx62mhn2nwh33yuytsdjkkalelbq"
+
+fetch_compute_hosts: true
+fetch_db_hosts: false
+
+compose:
+  ansible_user: "'ubuntu'"
+  ansible_host: public_ip if public_ip is defined and public_ip else private_ip
+
+keyed_groups:
+  - key: freeform_tags.role
+    prefix: role
+  - key: freeform_tags.tier
+    prefix: tier
+  - key: freeform_tags.environment
+    prefix: env
